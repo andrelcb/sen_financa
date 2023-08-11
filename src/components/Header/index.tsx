@@ -7,7 +7,7 @@ type Props = {
 
 export default function Header({ children }: Props) {
   return (
-    <header className="flex justify-between px-4 py-5 md:px-12">
+    <header className="flex justify-between px-4 py-5 md:px-12 max-w-7xl mx-auto">
        <b><span className='text-orange-600'>Sen</span><span className='text-blue-900'>Finanças</span></b>
       {children}
     </header>

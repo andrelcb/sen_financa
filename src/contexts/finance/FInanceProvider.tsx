@@ -10,9 +10,11 @@ interface ContextProps {
 }
 
 interface CreateFinanceProps extends Omit<Finance, 'id' | 'createdAt'> { }
+interface UpdateFinanceProps extends Omit<Finance, 'createdAt'> { }
 
 export function FinanceProvider({ children }: ContextProps) {
     const [financeList, setFinanceList] = useState<Finance[]>([])
+    const [financeListFiltered, setFinanceListFiltered] = useState<Finance[]>([]);
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
@@ -23,8 +25,8 @@ export function FinanceProvider({ children }: ContextProps) {
         try {
             setIsLoading(true)
             const { data } = await axios.get('/api/finance')
-            console.log(data);
             setFinanceList(data)
+            setFinanceListFiltered(data)
         } catch (err) {
             console.log(err)
         } finally {
@@ -40,6 +42,23 @@ export function FinanceProvider({ children }: ContextProps) {
             })
 
             setFinanceList([...financeList, data?.newFinance])
+            setFinanceListFiltered([...financeList, data?.newFinance])
+        } catch (err) {
+            console.log(err)
+        }
+        finally {
+            setIsLoading(false)
+        }
+    }
+
+    const updateFinance = async (body: UpdateFinanceProps) => {
+        try {
+            setIsLoading(true)
+            const { data } = await axios.put('/api/finance', {
+                ...body,
+            })
+
+            getFinanceList();
         } catch (err) {
             console.log(err)
         }
@@ -57,6 +76,7 @@ export function FinanceProvider({ children }: ContextProps) {
                 (finance) => finance.id !== financeId,
             )
             setFinanceList(updateList)
+            setFinanceListFiltered(updateList)
         } catch (err) {
             console.log(err)
         } finally {
@@ -68,9 +88,12 @@ export function FinanceProvider({ children }: ContextProps) {
         <FinanceContext.Provider
             value={{
                 financeList,
+                financeListFiltered,
+                setFinanceListFiltered,
                 setFinanceList,
                 getFinanceList,
                 createFinance,
+                updateFinance,
                 deleteFinance,
                 isLoading,
             }}

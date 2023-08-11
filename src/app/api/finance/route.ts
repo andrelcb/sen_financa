@@ -40,3 +40,39 @@ export async function POST(request: Request) {
     { status: 201 },
   )
 }
+
+export async function PUT(request: Request) {
+  const req = await request.json()
+
+  const { title, amount, category, type } = req
+
+  const updateFinance = await prisma.financeTransaction.updateMany({
+    where: {
+      id: req.id
+    },
+    data: {
+      amount,
+      title,
+      category,
+      type,
+    },
+  })
+
+  if (!updateFinance) {
+    return new NextResponse(
+      JSON.stringify({
+        error: {
+          code: 'ERROR_UPDATE_FINANCE',
+        },
+      }),
+    )
+  }
+
+  return new NextResponse(
+    JSON.stringify({
+      success: true,
+      updateFinance,
+    }),
+    { status: 201 },
+  )
+}

@@ -8,16 +8,23 @@ import { FinanceContext } from '@/contexts/finance/FinanceContexts'
 import { Finance } from '@/types/finance'
 import { BiLoaderCircle } from 'react-icons/bi'
 import { Button } from '../Button'
+import Select from '../Select'
 
 interface Props {
   isOpen: boolean
+  finance?: Finance
   handleCloseNewTransaction: () => void
 }
 
 interface FormInput extends Omit<Finance, 'id' | 'createdAt'> { }
 
+const Options = [
+  { value: "deposit", text: 'Entrada' },
+  { value: "withdraw", text: 'Saida' }
+]
+
 export function NewTransaction(props: Props) {
-  const { createFinance, isLoading } = useContext(FinanceContext)
+  const { createFinance, updateFinance, isLoading } = useContext(FinanceContext)
 
   const {
     register,
@@ -27,11 +34,7 @@ export function NewTransaction(props: Props) {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<FormInput>({
-    defaultValues: {
-      type: 'deposit',
-    },
-  })
+  } = useForm<FormInput>()
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     try {
@@ -40,9 +43,17 @@ export function NewTransaction(props: Props) {
         ...data,
         amount: Number(formatNumber),
       }
-      await createFinance(body)
+      if (props.finance?.id) {
+        const bodyEdit = {
+          ...body,
+          id: props.finance.id,
+        }
+        await updateFinance(bodyEdit)
+      } else {
+        await createFinance(body)
+      }
       onClose()
-      toast.success('Transação criada com sucesso.')
+      toast.success('Transação atualizada com sucesso.')
     } catch (error) {
       console.error(error)
       toast.error('Erro ao criar nova transação, tente novamente.')
@@ -64,85 +75,78 @@ export function NewTransaction(props: Props) {
     <div className="fixed top-0 flex h-screen w-full items-center justify-center bg-slate-50 bg-opacity-50">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-h-[580px] min-h-[500px] w-[500px] rounded-2xl bg-white px-6 py-5 shadow-lg"
+        className="max-h-[580px] min-h-[500px] w-[420px] rounded-2xl bg-white px-6 py-5 shadow-lg"
       >
-        <div className="flex items-center gap-2 font-semibold">
+        <div className="flex items-center gap-2 font-semibold mb-4">
           {/* <Image src={CardSVG} alt="card" /> */}
-          <p>Cadastrar nova transação</p>
+          {props.finance &&
+            <p>Editar transação</p>
+          }
+          {!props.finance &&
+            <p>Cadastrar nova transação</p>
+          }
         </div>
 
-        <Input
-          error={!!errors?.title}
-          errorMessage={errors?.title?.message}
-          placeholder="Titulo"
-          {...register('title', {
-            required: {
-              value: true,
-              message: 'Título é obrigatório.',
-            },
-          })}
-        />
+        <div className='flex flex-col gap-5'>
+          <Input
+            error={!!errors?.title}
+            defaultValue={props.finance?.title}
+            errorMessage={errors?.title?.message}
+            placeholder="Titulo"
+            {...register('title', {
+              required: {
+                value: true,
+                message: 'Título é obrigatório.',
+              },
+            })}
+          />
 
-        <Controller
-          name="amount"
-          control={control}
-          rules={{
-            required: {
-              value: true,
-              message: 'Valor é obrigatório.',
-            },
-          }}
-          render={({ field, fieldState, formState }) => (
-            <CurrencyInput
-              placeholder="Valor"
-              onValueChange={field.onChange as any}
-              value={field.value}
-              onBlur={field.onBlur}
-              error={!!fieldState.error}
-              errorMessage={formState.errors.amount?.message}
-            />
-          )}
-        />
+          <Controller
+            name="amount"
+            defaultValue={props.finance?.amount}
+            control={control}
+            rules={{
+              required: {
+                value: true,
+                message: 'Valor é obrigatório.',
+              },
+            }}
+            render={({ field, fieldState, formState }) => (
+              <CurrencyInput
+                placeholder="Valor"
+                onValueChange={field.onChange as any}
+                value={field.value}
+                onBlur={field.onBlur}
+                error={!!fieldState.error}
+                errorMessage={formState.errors.amount?.message}
+              />
+            )}
+          />
 
-        <div className="mt-6 flex items-center justify-around ">
-          <div className="flex flex-col items-center gap-2">
-            <button
-              type="button"
-              className={`flex h-20 w-20 items-center justify-center rounded-full  transition-colors hover:opacity-80
-              ${isActive('deposit') ? 'bg-green-300' : 'bg-[#E8E8F0]'}
-              `}
-              onClick={() => setValue('type', 'deposit')}
-            >
-              {/* <Image src={IncomeSVG} alt="Entrada" /> */}
-            </button>
-            <p className="text-gray-600">Entrada</p>
-          </div>
+          <Select
+            defaultValue={props.finance?.type}
+            options={Options}
+            {...register('type', {
+              required: {
+                value: true,
+                message: 'O tipo é obrigatório.',
+              },
+            })}
+          />
 
-          <div className="flex flex-col items-center gap-2">
-            <button
-              type="button"
-              className={`flex h-20 w-20 items-center justify-center rounded-full transition-colors hover:opacity-80
-              ${isActive('withdraw') ? 'bg-red-300' : 'bg-[#E8E8F0]'}
-              `}
-              onClick={() => setValue('type', 'withdraw')}
-            >
-              {/* <Image src={OutcomeSVG} alt="Saída" /> */}
-            </button>
-            <p className="text-gray-600">Saída</p>
-          </div>
+          <Input
+            error={!!errors?.category}
+            defaultValue={props.finance?.category}
+            errorMessage={errors?.category?.message}
+            placeholder="Categoria"
+            {...register('category', {
+              required: {
+                value: true,
+                message: 'Categoria é obrigatório.',
+              },
+            })}
+          />
         </div>
-
-        <Input
-          error={!!errors?.category}
-          errorMessage={errors?.category?.message}
-          placeholder="Categoria"
-          {...register('category', {
-            required: {
-              value: true,
-              message: 'Categoria é obrigatório.',
-            },
-          })}
-        />
 
         <div className='flex gap-2 items-center mt-10'>
           <Button
