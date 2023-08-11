@@ -3,7 +3,7 @@
 import { Finance } from "@/types/finance"
 import axios from "axios"
 import { ReactNode, useEffect, useState } from "react"
-import { FinanceContext } from "./FinanceContexts"
+import { FinanceContext } from "./FinanceContextType"
 
 interface ContextProps {
     children: ReactNode
