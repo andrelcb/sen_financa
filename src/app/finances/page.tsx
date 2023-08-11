@@ -82,15 +82,15 @@ export default function Home() {
     setIsOpen(true);
   }
 
-  const totalBalance = financeList?.reduce((sum, item) => {
+  const totalBalance = financeListFiltered?.reduce((sum, item) => {
     return item.type === 'deposit' ? sum + item.amount : sum - item.amount
   }, 0)
 
-  const totalDeposit = financeList?.reduce((sum, item) => {
+  const totalDeposit = financeListFiltered?.reduce((sum, item) => {
     return item.type === 'deposit' ? sum + item.amount : sum
   }, 0)
 
-  const totalWithdraw = financeList?.reduce((sum, item) => {
+  const totalWithdraw = financeListFiltered?.reduce((sum, item) => {
     return item.type === 'withdraw' ? sum - item.amount : sum
   }, 0)
 
