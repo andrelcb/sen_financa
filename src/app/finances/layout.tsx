@@ -1,3 +1,4 @@
+
 import { FinanceProvider } from '@/contexts/finance/FinanceProvider'
 import { ReactNode } from 'react'
 
