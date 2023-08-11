@@ -3,9 +3,6 @@ import { useContext, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import CurrencyInput from '@/components/CurrencyInput'
 import Input from '@/components/Input'
-// import IncomeSVG from '@/assets/income.svg'
-// import OutcomeSVG from '@/assets/outcome.svg'
-// import CardSVG from '@/assets/card.svg'
 import { toast } from 'react-toastify'
 import { FinanceContext } from '@/contexts/finance/FinanceContexts'
 import { Finance } from '@/types/finance'
@@ -20,8 +17,7 @@ interface Props {
 interface FormInput extends Omit<Finance, 'id' | 'createdAt'> { }
 
 export function NewTransaction(props: Props) {
-  const [isLoading, setIsLoading] = useState(false)
-  const { createFinance } = useContext(FinanceContext)
+  const { createFinance, isLoading } = useContext(FinanceContext)
 
   const {
     register,
@@ -44,15 +40,12 @@ export function NewTransaction(props: Props) {
         ...data,
         amount: Number(formatNumber),
       }
-      setIsLoading(true)
       await createFinance(body)
       onClose()
       toast.success('Transação criada com sucesso.')
     } catch (error) {
       console.error(error)
       toast.error('Erro ao criar nova transação, tente novamente.')
-    } finally {
-      setIsLoading(false)
     }
   }
 

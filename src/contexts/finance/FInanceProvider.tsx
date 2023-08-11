@@ -1,3 +1,5 @@
+"use client"
+
 import { Finance } from "@/types/finance"
 import axios from "axios"
 import { ReactNode, useEffect, useState } from "react"
@@ -7,10 +9,10 @@ interface ContextProps {
     children: ReactNode
 }
 
-interface CreateFinanceProps extends Omit<Finance, 'id' | 'createdAt'> {}
+interface CreateFinanceProps extends Omit<Finance, 'id' | 'createdAt'> { }
 
 export function FinanceProvider({ children }: ContextProps) {
-    const [financeList, setFinanceList] = useState<Finance []>([])
+    const [financeList, setFinanceList] = useState<Finance[]>([])
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
@@ -21,6 +23,7 @@ export function FinanceProvider({ children }: ContextProps) {
         try {
             setIsLoading(true)
             const { data } = await axios.get('/api/finance')
+            console.log(data);
             setFinanceList(data)
         } catch (err) {
             console.log(err)
@@ -31,6 +34,7 @@ export function FinanceProvider({ children }: ContextProps) {
 
     const createFinance = async (body: CreateFinanceProps) => {
         try {
+            setIsLoading(true)
             const { data } = await axios.post('/api/finance', {
                 ...body,
             })
@@ -38,6 +42,9 @@ export function FinanceProvider({ children }: ContextProps) {
             setFinanceList([...financeList, data?.newFinance])
         } catch (err) {
             console.log(err)
+        }
+        finally {
+            setIsLoading(false)
         }
     }
 
