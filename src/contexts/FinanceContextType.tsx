@@ -1,8 +1,7 @@
 'use client'
 
 import { Finance } from '@/types/finance'
-import axios from 'axios'
-import { createContext, useState, ReactNode, useEffect } from 'react'
+import { createContext } from 'react'
 
 interface CreateFinanceProps extends Omit<Finance, 'id' | 'createdAt'> {}
 interface UpdateFinanceProps extends Omit<Finance, 'createdAt'> { }
