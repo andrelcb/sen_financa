@@ -1,6 +1,6 @@
 <h1 align="center"> SenFinanças </h1>
 
-🗔 Link em produção: https://nu-finance-application.vercel.app/
+🗔 Link em produção: https://sen-financa-qm43nzg4c-andrelcb.vercel.app/
 
 ## Bem-vindo ao aplicativo SenFinanças!
 
