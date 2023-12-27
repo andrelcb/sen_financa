@@ -23,7 +23,6 @@ Before starting, you need to have [Git](https://git-scm.com) and [Node](https://
 
 ```bash
 # Clone this project
-$ git clone https://github.com/Dev-Pedrosv/trips-app.git
 
 # access
 $ cd trips-app
