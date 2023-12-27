@@ -25,7 +25,7 @@ Before starting, you need to have [Git](https://git-scm.com) and [Node](https://
 # Clone this project
 
 # access
-$ cd trips-app
+$ cd  sen-financa
 
 # install dependencies
 $ yarn or npm
